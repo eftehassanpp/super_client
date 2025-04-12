@@ -155,6 +155,10 @@ func (sc *SuperClient) SetNewProxy() error {
 	err := sc.Client.SetProxy(randomProxy)
 	return err
 }
+func (sc *SuperClient) SetProxy(proxyUrl string) error {
+	err := sc.Client.SetProxy(proxyUrl)
+	return err
+}
 
 func (sc *SuperClient) SetFollowRedirect(followRedirect bool) {
 	sc.Client.SetFollowRedirect(followRedirect)
