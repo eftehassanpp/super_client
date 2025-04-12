@@ -207,10 +207,10 @@ func (sc *SuperClient) CurrentProxy() string {
 
 func (sc *SuperClient) MakeRequest(req *http.Request, headers map[string]string) (*http.Response, error) {
 	for key, value := range *sc.DefaultHeaders {
-		req.Header.Add(key, value)
+		req.Header[key] = []string{value}
 	}
 	for key, value := range headers {
-		req.Header.Add(key, value)
+		req.Header[key] = []string{value}
 	}
 	for _, item := range *sc.HeaderOrder {
 		req.Header.Add(http.HeaderOrderKey, item)
