@@ -74,6 +74,9 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 	if conf.Timeout != 0 {
 		sc.Timeout = conf.Timeout
 	}
+	if conf.Profile != nil {
+		sc.Profile = *conf.Profile
+	}
 	options := []tls_client.HttpClientOption{
 		tls_client.WithTimeoutSeconds(sc.Timeout),
 		tls_client.WithClientProfile(sc.Profile),
@@ -98,9 +101,7 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 	if conf.AcceptLang != "" {
 		sc.AcceptLang = conf.AcceptLang
 	}
-	if conf.Profile != nil {
-		sc.Profile = *conf.Profile
-	}
+
 	if conf.BaseProxy != "" {
 		sc.BaseProxy = conf.BaseProxy
 		err = sc.SetNewProxy()
@@ -112,16 +113,15 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 		if conf.UserAgent == "" {
 			sc.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
 		}
+
 		sc.DefaultHeaders = &map[string]string{
-			"upgrade-insecure-requests": "1",
-			"user-agent":                sc.UserAgent,
-			"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-			"sec-fetch-site":            "none",
-			"sec-fetch-mode":            "navigate",
-			"sec-fetch-user":            "?1",
-			"sec-fetch-dest":            "document",
-			"accept-encoding":           "gzip, deflate, br, zstd",
-			"accept-language":           sc.AcceptLang,
+			"user-agent":      sc.UserAgent,
+			"accept":          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+			"sec-fetch-site":  "none",
+			"sec-fetch-mode":  "navigate",
+			"sec-fetch-dest":  "document",
+			"accept-encoding": "gzip, deflate, br, zstd",
+			"accept-language": sc.AcceptLang,
 		}
 	} else {
 		if conf.SecCH != "" {
