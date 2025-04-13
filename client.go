@@ -223,7 +223,7 @@ func (sc *SuperClient) MakeRequest(req *http.Request, headers map[string]string)
 	return resp, nil
 }
 
-func (sc *SuperClient) Get(url string, params map[string]string, headers map[string]string) (response *SuperResponse) {
+func (sc *SuperClient) Get(url string, params map[string]string, headers map[string]string, output any) (response *SuperResponse) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return &SuperResponse{Error: fmt.Errorf("error creating GET request for URL %s: %v", url, err)}
@@ -256,12 +256,16 @@ func (sc *SuperClient) Get(url string, params map[string]string, headers map[str
 		Error:      nil,
 	}
 	if isJSONResponse(resp) {
-		json.Unmarshal([]byte(response.Text), &response.Unmarshaled)
+		if output != nil {
+			json.Unmarshal(body, output)
+		} else {
+			json.Unmarshal(body, &response.Unmarshaled)
+		}
 	}
 	return response
 }
 
-func (sc *SuperClient) Post(url string, params map[string]string, headers map[string]string, data *string, jsonData any) (response *SuperResponse) {
+func (sc *SuperClient) Post(url string, params map[string]string, headers map[string]string, data *string, jsonData any, output any) (response *SuperResponse) {
 	var payload []byte
 
 	// If data is provided, use it as form-data (text)
@@ -310,7 +314,11 @@ func (sc *SuperClient) Post(url string, params map[string]string, headers map[st
 		Error:      nil,
 	}
 	if isJSONResponse(resp) {
-		json.Unmarshal([]byte(response.Text), &response.Unmarshaled)
+		if output != nil {
+			json.Unmarshal(body, output)
+		} else {
+			json.Unmarshal(body, &response.Unmarshaled)
+		}
 	}
 	return response
 }
