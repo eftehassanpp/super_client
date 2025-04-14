@@ -256,7 +256,9 @@ func (sc *SuperClient) Get(url string, params map[string]string, headers map[str
 
 func (sc *SuperClient) Post(url string, params map[string]string, headers map[string]string, data *string, jsonData any, output any) (response *SuperResponse) {
 	var payload []byte
-
+	if headers == nil {
+		headers = map[string]string{}
+	}
 	// If data is provided, use it as form-data (text)
 	if data != nil {
 		payload = []byte(*data)
