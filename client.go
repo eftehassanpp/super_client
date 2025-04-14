@@ -59,14 +59,12 @@ type SuperClient struct {
 }
 
 type ClientConfig struct {
-	HeaderOrder *[]string
-	BaseProxy   string
-	Timeout     int
-	SecCH       string
-	Platform    string
-	UserAgent   string
-	AcceptLang  string
 	Profile     *profiles.ClientProfile
+	Timeout     int
+	BaseProxy   string
+	UserAgent   string
+	SecCH       string
+	HeaderOrder *[]string
 }
 
 func (sc *SuperClient) Init(conf *ClientConfig) error {
@@ -98,9 +96,6 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 	if conf.HeaderOrder != nil {
 		sc.HeaderOrder = conf.HeaderOrder
 	}
-	if conf.AcceptLang != "" {
-		sc.AcceptLang = conf.AcceptLang
-	}
 
 	if conf.BaseProxy != "" {
 		sc.BaseProxy = conf.BaseProxy
@@ -111,7 +106,7 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 	}
 	if sc.Profile.GetClientHelloId().Client == "Firefox" {
 		if conf.UserAgent == "" {
-			sc.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0"
+			sc.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
 		}
 
 		sc.DefaultHeaders = &map[string]string{
@@ -121,29 +116,23 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 			"sec-fetch-mode":  "navigate",
 			"sec-fetch-dest":  "document",
 			"accept-encoding": "gzip, deflate, br, zstd",
-			"accept-language": sc.AcceptLang,
+			"accept-language": "en-US,en;q=0.5",
 		}
 	} else {
 		if conf.SecCH != "" {
 			sc.SecCH = conf.SecCH
 		}
-		if conf.Platform != "" {
-			sc.Platform = conf.Platform
-		}
 		sc.DefaultHeaders = &map[string]string{
-			"sec-ch-ua":                 sc.SecCH,
-			"sec-ch-ua-mobile":          "?0",
-			"sec-ch-ua-platform":        sc.Platform,
-			"upgrade-insecure-requests": "1",
-			"user-agent":                sc.UserAgent,
-			"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-			"sec-fetch-site":            "none",
-			"sec-fetch-mode":            "navigate",
-			"sec-fetch-user":            "?1",
-			"sec-fetch-dest":            "document",
-			"accept-encoding":           "gzip, deflate, br, zstd",
-			"accept-language":           sc.AcceptLang,
-			"priority":                  "u=0, i",
+			"sec-ch-ua":        sc.SecCH,
+			"sec-ch-ua-mobile": "?0",
+			"user-agent":       sc.UserAgent,
+			"accept":           "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+			"sec-fetch-site":   "none",
+			"sec-fetch-mode":   "navigate",
+			"sec-fetch-dest":   "document",
+			"accept-encoding":  "gzip, deflate, br, zstd",
+			"accept-language":  "en-US,en;q=0.9",
+			"priority":         "u=0, i",
 		}
 	}
 
@@ -325,11 +314,9 @@ func (sc *SuperClient) Post(url string, params map[string]string, headers map[st
 
 func NewSuperClient(conf *ClientConfig) (*SuperClient, error) {
 	superClient := &SuperClient{Timeout: 30,
-		SecCH:      `"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"`,
-		UserAgent:  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
-		AcceptLang: "en-GB,en;q=0.9",
-		Platform:   `"Windows"`,
-		Profile:    profiles.Chrome_133,
+		SecCH:     `"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"`,
+		UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+		Profile:   profiles.Chrome_133,
 	} //setting default values
 	err := superClient.Init(conf)
 	return superClient, err
