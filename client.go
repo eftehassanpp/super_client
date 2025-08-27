@@ -65,6 +65,7 @@ type ClientConfig struct {
 	UserAgent   string
 	SecCH       string
 	HeaderOrder *[]string
+	Http1       bool
 }
 
 func (sc *SuperClient) Init(conf *ClientConfig) error {
@@ -81,6 +82,9 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 		tls_client.WithNotFollowRedirects(),
 		tls_client.WithCookieJar(sc.Jar),
 		tls_client.WithRandomTLSExtensionOrder(),
+	}
+	if conf.Http1 {
+		options = append(options, tls_client.WithForceHttp1())
 	}
 
 	var err error
