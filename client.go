@@ -66,6 +66,7 @@ type ClientConfig struct {
 	SecCH       string
 	HeaderOrder *[]string
 	Http1       bool
+	Debug       bool
 }
 
 func (sc *SuperClient) Init(conf *ClientConfig) error {
@@ -88,8 +89,14 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 	}
 
 	var err error
-	logger := tls_client.NewNoopLogger()
-	sc.Client, err = tls_client.NewHttpClient(tls_client.NewDebugLogger(logger), options...)
+	// logger := tls_client.NewDebugLogger(tls_client.NewNoopLogger())
+	var logger tls_client.Logger
+	if conf.Debug {
+		logger = tls_client.NewDebugLogger(tls_client.NewNoopLogger())
+	} else {
+		logger = tls_client.NewNoopLogger()
+	}
+	sc.Client, err = tls_client.NewHttpClient(logger, options...)
 	if err != nil {
 		return err
 	}
