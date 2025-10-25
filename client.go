@@ -88,7 +88,8 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 	}
 
 	var err error
-	sc.Client, err = tls_client.NewHttpClient(tls_client.NewNoopLogger(), options...)
+	logger := tls_client.NewNoopLogger()
+	sc.Client, err = tls_client.NewHttpClient(tls_client.NewDebugLogger(logger), options...)
 	if err != nil {
 		return err
 	}
@@ -142,16 +143,17 @@ func (sc *SuperClient) Init(conf *ClientConfig) error {
 
 	return nil
 }
-func (sc *SuperClient) SetNewProxy() error {
-	randomProxySession := utils.GenerateRandomString(12)
-	randomProxy := fmt.Sprintf(sc.BaseProxy, randomProxySession)
-	err := sc.Client.SetProxy(randomProxy)
-	return err
-}
 func (sc *SuperClient) SetProxy(proxyUrl string) error {
 	err := sc.Client.SetProxy(proxyUrl)
 	return err
 }
+func (sc *SuperClient) SetNewProxy() error {
+	randomProxySession := utils.GenerateRandomString(10)
+	randomProxy := strings.Replace(sc.BaseProxy, "change", randomProxySession, 1)
+	err := sc.SetProxy(randomProxy)
+	return err
+}
+
 func (sc *SuperClient) GetProxy() string {
 	return sc.Client.GetProxy()
 }
